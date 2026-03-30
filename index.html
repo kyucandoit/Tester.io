@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tester.io — Bank Smarter. Live Better.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        montserrat: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            gold: '#C6A559',
+                            goldLight: '#E6B979',
+                            dark: '#0A0A0F',
+                            darkCard: '#12121A',
+                            darkSurface: '#1A1A24',
+                            darkBorder: '#2A2A36',
+                            muted: '#8A8A9A',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background: #FAFAFA; color: #1a1a2e; }
+
+        .gold-gradient {
+            background: linear-gradient(135deg, #C6A559, #E6B979);
+        }
+        .gold-text {
+            background: linear-gradient(135deg, #C6A559, #E6B979);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .gold-border {
+            border: 1.5px solid transparent;
+            background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #C6A559, #E6B979);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        /* Layered shadows */
+        .card-shadow {
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.04),
+                0 4px 12px rgba(198,165,89,0.06),
+                0 12px 32px rgba(0,0,0,0.05);
+        }
+        .card-shadow-strong {
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.04),
+                0 8px 24px rgba(198,165,89,0.10),
+                0 20px 48px rgba(0,0,0,0.08);
+        }
+        .elevated-shadow {
+            box-shadow:
+                0 4px 6px rgba(0,0,0,0.03),
+                0 12px 24px rgba(198,165,89,0.08),
+                0 24px 48px rgba(0,0,0,0.06);
+        }
+
+        /* Animations - only transform and opacity */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-up {
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease forwards;
+            opacity: 0;
+        }
+        .animate-scale-in {
+            animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+
+        /* Button hover/focus/active */
+        .btn-gold {
+            background: linear-gradient(135deg, #C6A559, #E6B979);
+            color: #0A0A0F;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+        }
+        .btn-gold:hover { transform: translateY(-1px); opacity: 0.92; }
+        .btn-gold:focus-visible { outline: 2px solid #C6A559; outline-offset: 2px; }
+        .btn-gold:active { transform: translateY(0) scale(0.98); }
+
+        .btn-outline {
+            border: 1.5px solid #C6A559;
+            color: #C6A559;
+            background: transparent;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+        .btn-outline:hover { background: linear-gradient(135deg, #C6A559, #E6B979); color: #0A0A0F; transform: translateY(-1px); }
+        .btn-outline:focus-visible { outline: 2px solid #C6A559; outline-offset: 2px; }
+        .btn-outline:active { transform: translateY(0) scale(0.98); }
+
+        .btn-white {
+            background: #fff;
+            color: #1a1a2e;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+        }
+        .btn-white:hover { transform: translateY(-1px); opacity: 0.9; }
+        .btn-white:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+        .btn-white:active { transform: translateY(0) scale(0.98); }
+
+        /* Nav link hover */
+        .nav-link {
+            position: relative;
+            transition: opacity 0.2s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background: linear-gradient(135deg, #C6A559, #E6B979);
+            transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link:hover { opacity: 0.85; }
+
+        /* Stats bar */
+        .stats-bar {
+            background: linear-gradient(135deg, #1a1a2e, #2a2a48);
+        }
+
+        /* Pricing card highlight */
+        .pricing-highlight {
+            background: linear-gradient(135deg, #1a1a2e, #2a2a48);
+            color: #fff;
+        }
+
+        /* Feature card hover */
+        .feature-card {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Testimonial section */
+        .testimonial-bg {
+            background: #F3F0EB;
+        }
+
+        /* CTA section */
+        .cta-section {
+            background: linear-gradient(135deg, #1a1a2e, #2a2a48);
+        }
+
+        /* Grain overlay */
+        .grain::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Smooth scroll */
+        html { scroll-behavior: smooth; }
+
+        /* Checkmark icon style */
+        .check-icon {
+            color: #C6A559;
+        }
+
+        .logo-glow {
+            filter: drop-shadow(0 0 8px rgba(198, 165, 89, 0.3));
+        }
+    </style>
+</head>
+<body class="font-montserrat antialiased">
+
+    <!-- ====== NAVIGATION ====== -->
+    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-100/60 animate-fade-in">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2">
+                <img src="brand%20assets/Tester%20Logo.png" alt="Tester.io Logo" class="w-8 h-8 logo-glow">
+                <span class="text-lg font-bold tracking-tight" style="letter-spacing: -0.03em;">Tester.io</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="nav-link text-sm font-medium text-gray-600">Features</a>
+                <a href="#pricing" class="nav-link text-sm font-medium text-gray-600">Pricing</a>
+                <a href="#testimonials" class="nav-link text-sm font-medium text-gray-600">Testimonials</a>
+                <a href="#" class="nav-link text-sm font-medium text-gray-600">About</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="#" class="hidden sm:inline text-sm font-medium text-gray-600 nav-link">Log in</a>
+                <button class="btn-gold text-sm px-5 py-2 rounded-full">Get Started</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ====== HERO SECTION ====== -->
+    <section class="pt-28 pb-16 px-6 relative overflow-hidden grain">
+        <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
+            <!-- Left column -->
+            <div class="flex-1 max-w-xl animate-fade-up">
+                <h1 class="text-4xl md:text-5xl font-extrabold leading-[1.1] tracking-tight mb-5" style="letter-spacing: -0.03em;">
+                    Bank Smarter.<br>Live Better.
+                </h1>
+                <p class="text-gray-500 text-base md:text-lg leading-relaxed mb-8 max-w-md" style="line-height: 1.7;">
+                    Manage your finances effortlessly with smart banking tools designed for the modern era. Take control today.
+                </p>
+                <div class="flex flex-wrap gap-3 mb-10">
+                    <button class="btn-gold text-sm px-7 py-3 rounded-full">Get Started</button>
+                    <button class="btn-outline text-sm px-7 py-3 rounded-full">Learn More</button>
+                </div>
+                <div class="flex items-center gap-6 text-xs text-gray-400">
+                    <span class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-brand-gold" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        Trusted by 100K+
+                    </span>
+                    <span>•</span>
+                    <span>4.9/5 Rating</span>
+                </div>
+            </div>
+            <!-- Right column — hero images -->
+            <div class="flex-1 relative animate-fade-up delay-2">
+                <div class="relative w-full max-w-md mx-auto">
+                    <!-- Background card -->
+                    <div class="absolute -top-4 -right-4 w-48 h-64 rounded-2xl overflow-hidden card-shadow" style="transform: rotate(6deg);">
+                        <img src="https://placehold.co/400x560/E6B979/1a1a2e?text=Finance" alt="Finance visual" class="w-full h-full object-cover" style="mix-blend-mode: multiply;">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                    </div>
+                    <!-- Main card -->
+                    <div class="relative w-56 h-72 rounded-2xl overflow-hidden card-shadow-strong z-10">
+                        <img src="https://placehold.co/480x620/1a1a2e/E6B979?text=Smart+Banking" alt="Smart Banking" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    </div>
+                    <!-- Floating badge -->
+                    <div class="absolute bottom-8 right-0 bg-white rounded-xl px-4 py-3 card-shadow z-20 animate-scale-in delay-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full gold-gradient flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold">Verified</p>
+                                <p class="text-[10px] text-gray-400">Secure & Trusted</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== PARTNER LOGOS ====== -->
+    <section class="py-6 px-6 border-y border-gray-100 animate-fade-in delay-3">
+        <div class="max-w-4xl mx-auto flex items-center justify-center gap-10 flex-wrap text-gray-300">
+            <span class="text-xs text-gray-400 font-medium uppercase tracking-widest">Trusted by</span>
+            <span class="text-sm font-bold text-gray-400 tracking-wide">Cascade</span>
+            <span class="text-sm font-bold text-gray-400 tracking-wide">Stripe</span>
+            <span class="text-sm font-bold text-gray-400 tracking-wide">Envision</span>
+            <span class="text-sm font-bold text-gray-400 tracking-wide">ContentAI</span>
+        </div>
+    </section>
+
+    <!-- ====== STATS BAR ====== -->
+    <section class="py-0 px-6">
+        <div class="max-w-3xl mx-auto -mt-0">
+            <div class="stats-bar rounded-2xl px-8 py-6 flex flex-col sm:flex-row items-center justify-around gap-6 text-white relative overflow-hidden grain">
+                <div class="text-center">
+                    <p class="text-2xl md:text-3xl font-extrabold gold-text">100K</p>
+                    <p class="text-xs text-gray-400 mt-1 font-medium">Active Users</p>
+                </div>
+                <div class="w-px h-10 bg-gray-600 hidden sm:block"></div>
+                <div class="text-center">
+                    <p class="text-2xl md:text-3xl font-extrabold gold-text">99%</p>
+                    <p class="text-xs text-gray-400 mt-1 font-medium">Customer Satisfaction</p>
+                </div>
+                <div class="w-px h-10 bg-gray-600 hidden sm:block"></div>
+                <div class="text-center">
+                    <p class="text-2xl md:text-3xl font-extrabold gold-text">#2</p>
+                    <p class="text-xs text-gray-400 mt-1 font-medium">Finance App Worldwide</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== KEY FEATURES ====== -->
+    <section id="features" class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-4 tracking-tight" style="letter-spacing: -0.03em;">Discover Our Key Features</h2>
+            <p class="text-center text-gray-400 text-sm mb-14 max-w-md mx-auto" style="line-height: 1.7;">Powerful tools designed to transform the way you manage your finances.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Feature 1 — International Transfer -->
+                <div class="feature-card bg-white rounded-2xl p-6 card-shadow relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 opacity-5" style="background: radial-gradient(circle, #C6A559 0%, transparent 70%);"></div>
+                    <div class="w-full h-44 bg-gray-50 rounded-xl mb-5 flex items-center justify-center overflow-hidden">
+                        <div class="bg-white rounded-xl p-4 card-shadow w-5/6">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[10px]">🇺🇸</div>
+                                    <span class="text-xs font-semibold">USD</span>
+                                </div>
+                                <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-[10px]">🇬🇧</div>
+                                    <span class="text-xs font-semibold">GBP</span>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-lg font-bold">$1,500.00</p>
+                                <p class="text-[10px] text-gray-400">≈ £1,188.45</p>
+                            </div>
+                            <button class="btn-gold w-full text-[10px] py-1.5 rounded-lg mt-3">Transfer Now</button>
+                        </div>
+                    </div>
+                    <h3 class="text-base font-bold mb-1">International Money Transfer</h3>
+                    <p class="text-xs text-gray-400" style="line-height: 1.7;">Send money worldwide with competitive rates and zero hidden fees.</p>
+                </div>
+
+                <!-- Feature 2 — Dashboard (Center, prominent) -->
+                <div class="feature-card bg-white rounded-2xl p-6 card-shadow-strong relative overflow-hidden md:-mt-4 md:mb-4">
+                    <div class="absolute top-0 right-0 w-32 h-32 opacity-5" style="background: radial-gradient(circle, #C6A559 0%, transparent 70%);"></div>
+                    <div class="w-full h-52 bg-gray-50 rounded-xl mb-5 flex items-center justify-center overflow-hidden">
+                        <div class="bg-white rounded-xl p-4 card-shadow w-5/6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] text-gray-400">Welcome back, <span class="font-semibold text-gray-700">Andy</span></span>
+                                <div class="w-5 h-5 rounded-full bg-gray-200"></div>
+                            </div>
+                            <p class="text-xl font-extrabold mb-1">$20,864.99 <span class="text-[10px] font-normal text-green-500">↑</span></p>
+                            <div class="flex gap-1 mb-3">
+                                <span class="text-[8px] bg-gray-100 rounded px-1.5 py-0.5 text-gray-500">Visa</span>
+                                <span class="text-[8px] bg-gray-100 rounded px-1.5 py-0.5 text-gray-500">Savings</span>
+                            </div>
+                            <!-- Mini chart placeholder -->
+                            <div class="h-10 bg-gradient-to-r from-brand-gold/10 to-brand-goldLight/10 rounded-lg flex items-end px-1 gap-0.5">
+                                <div class="w-2 bg-brand-gold/40 rounded-t" style="height:40%"></div>
+                                <div class="w-2 bg-brand-gold/50 rounded-t" style="height:60%"></div>
+                                <div class="w-2 bg-brand-gold/60 rounded-t" style="height:45%"></div>
+                                <div class="w-2 bg-brand-gold/70 rounded-t" style="height:80%"></div>
+                                <div class="w-2 bg-brand-gold/80 rounded-t" style="height:55%"></div>
+                                <div class="w-2 bg-brand-gold rounded-t" style="height:90%"></div>
+                                <div class="w-2 bg-brand-goldLight rounded-t" style="height:70%"></div>
+                            </div>
+                            <div class="flex gap-2 mt-3">
+                                <button class="btn-gold flex-1 text-[9px] py-1.5 rounded-lg">Send</button>
+                                <button class="flex-1 text-[9px] py-1.5 rounded-lg bg-gray-100 text-gray-600 font-semibold">Request</button>
+                            </div>
+                            <div class="mt-2 text-[8px] text-gray-300 font-mono tracking-wider">•••• •••• •••• 4291</div>
+                        </div>
+                    </div>
+                    <h3 class="text-base font-bold mb-1">Smart Dashboard</h3>
+                    <p class="text-xs text-gray-400" style="line-height: 1.7;">Track all your accounts, spending, and investments in one place.</p>
+                </div>
+
+                <!-- Feature 3 — Withdraw -->
+                <div class="feature-card bg-white rounded-2xl p-6 card-shadow relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 opacity-5" style="background: radial-gradient(circle, #C6A559 0%, transparent 70%);"></div>
+                    <div class="w-full h-44 bg-gray-50 rounded-xl mb-5 flex items-center justify-center overflow-hidden">
+                        <div class="bg-white rounded-xl p-4 card-shadow w-5/6">
+                            <p class="text-[10px] text-gray-400 mb-1">Withdraw</p>
+                            <p class="text-xs font-semibold text-gray-500 mb-1">Money Bank</p>
+                            <div class="w-full h-px bg-gray-100 my-2"></div>
+                            <p class="text-[10px] text-gray-400">Available Balance</p>
+                            <p class="text-xl font-extrabold mt-0.5">$98,481.44</p>
+                            <button class="btn-gold w-full text-[10px] py-1.5 rounded-lg mt-3">Withdraw</button>
+                        </div>
+                    </div>
+                    <h3 class="text-base font-bold mb-1">Instant Withdrawals</h3>
+                    <p class="text-xs text-gray-400" style="line-height: 1.7;">Access your money instantly, anytime, anywhere with one tap.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== PRICING SECTION ====== -->
+    <section id="pricing" class="py-20 px-6 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col lg:flex-row items-start gap-12">
+                <!-- Left text -->
+                <div class="flex-1 max-w-sm">
+                    <h2 class="text-2xl md:text-3xl font-extrabold mb-4 tracking-tight" style="letter-spacing: -0.03em;">Find the right plan for your needs</h2>
+                    <p class="text-gray-400 text-sm mb-6" style="line-height: 1.7;">Choose a plan that works best for you and your financial goals.</p>
+                    <button class="btn-gold text-sm px-7 py-3 rounded-full">Get Started</button>
+                    <a href="#" class="block mt-4 text-xs text-brand-gold font-semibold nav-link w-fit">See all plans →</a>
+                </div>
+
+                <!-- Pricing cards -->
+                <div class="flex-1 flex flex-col sm:flex-row gap-5">
+                    <!-- Basic Plan -->
+                    <div class="flex-1 bg-white rounded-2xl p-6 card-shadow border border-gray-100">
+                        <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center mb-4">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+                        </div>
+                        <p class="text-3xl font-extrabold mb-0.5">$15</p>
+                        <p class="text-xs text-gray-400 mb-5">per month</p>
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-center gap-2 text-xs text-gray-500">
+                                <svg class="w-4 h-4 check-icon flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                Basic account management
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-gray-500">
+                                <svg class="w-4 h-4 check-icon flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                Up to 5 transfers/month
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-gray-500">
+                                <svg class="w-4 h-4 check-icon flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                Email support
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-gray-500">
+                                <svg class="w-4 h-4 check-icon flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                Spending analytics
+                            </li>
+                        </ul>
+                        <button class="btn-outline w-full text-xs py-2.5 rounded-full">Choose Plan</button>
+                    </div>
+
+                    <!-- Pro Plan (highlighted) -->
+                    <div class="flex-1 pricing-highlight rounded-2xl p-6 card-shadow-strong relative overflow-hidden">
+                        <div class="absolute top-3 right-3 gold-gradient text-[9px] font-bold text-black px-2.5 py-1 rounded-full">Popular</div>
+                        <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-4">
+                            <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"/></svg>
+                        </div>
+                        <p class="text-3xl font-extrabold mb-0.5 gold-text">$59</p>
+                        <p class="text-xs text-gray-400 mb-5">per month</p>
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-center gap-2 text-xs text-gray-300">
+                                <svg class="w-4 h-4 text-brand-gold flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                All Basic features
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-gray-300">
+                                <svg class="w-4 h-4 text-brand-gold flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                Unlimited transfers
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-gray-300">
+                                <svg class="w-4 h-4 text-brand-gold flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                Priority 24/7 support
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-gray-300">
+                                <svg class="w-4 h-4 text-brand-gold flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                Advanced analytics & insights
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-gray-300">
+                                <svg class="w-4 h-4 text-brand-gold flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                Multi-currency accounts
+                            </li>
+                        </ul>
+                        <button class="btn-gold w-full text-xs py-2.5 rounded-full">Choose Plan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== TESTIMONIAL SECTION ====== -->
+    <section id="testimonials" class="py-20 px-6 testimonial-bg relative overflow-hidden grain">
+        <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
+            <!-- Quote -->
+            <div class="flex-1 max-w-lg">
+                <svg class="w-8 h-8 text-brand-gold mb-4 opacity-60" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609L9.978 5.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H0z"/></svg>
+                <p class="text-lg md:text-xl font-semibold leading-relaxed mb-6" style="line-height: 1.7; letter-spacing: -0.01em;">
+                    Working with Tester.io has been a game-changer for my financial well-being. Their expert guidance and user-friendly tools made everything easy to understand.
+                </p>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full gold-gradient flex items-center justify-center text-white text-sm font-bold">JK</div>
+                    <div>
+                        <p class="text-sm font-bold">John Keaton</p>
+                        <p class="text-xs text-gray-400">Verified Customer</p>
+                    </div>
+                </div>
+                <!-- Dots nav -->
+                <div class="flex gap-2 mt-6">
+                    <div class="w-6 h-1.5 rounded-full gold-gradient"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                </div>
+            </div>
+            <!-- Testimonial image -->
+            <div class="flex-1 max-w-sm">
+                <div class="rounded-2xl overflow-hidden card-shadow-strong relative">
+                    <img src="https://placehold.co/500x600/1a1a2e/E6B979?text=Happy+Customer" alt="Customer" class="w-full h-80 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div class="absolute inset-0" style="background: rgba(198,165,89,0.08); mix-blend-mode: multiply;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== CTA SECTION ====== -->
+    <section class="py-20 px-6">
+        <div class="max-w-3xl mx-auto cta-section rounded-3xl px-8 py-14 text-center relative overflow-hidden grain">
+            <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 30% 50%, #C6A559, transparent 60%), radial-gradient(circle at 70% 50%, #E6B979, transparent 60%);"></div>
+            <div class="relative z-10">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-3 tracking-tight" style="letter-spacing: -0.03em;">Take control of your<br>financial future today.</h2>
+                <p class="text-sm text-gray-400 mb-8 max-w-md mx-auto" style="line-height: 1.7;">Join thousands of users who are already banking smarter with Tester.io.</p>
+                <div class="flex justify-center gap-3">
+                    <button class="btn-gold text-sm px-7 py-3 rounded-full">Get Started</button>
+                    <button class="btn-white text-sm px-7 py-3 rounded-full">Learn More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== FOOTER (Footer7 style) ====== -->
+    <footer class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex w-full flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
+                <!-- Left: Logo, description, social -->
+                <div class="flex w-full flex-col justify-between gap-6 lg:items-start">
+                    <div class="flex items-center gap-2 lg:justify-start">
+                        <a href="#">
+                            <img src="brand%20assets/Tester%20Logo.png" alt="Tester.io" class="h-8 logo-glow">
+                        </a>
+                        <h2 class="text-xl font-semibold tracking-tight">Tester.io</h2>
+                    </div>
+                    <p class="max-w-[70%] text-sm text-gray-400" style="line-height: 1.7;">
+                        Empowering you to bank smarter and live better with expert guidance and user-friendly tools.
+                    </p>
+                    <ul class="flex items-center space-x-6 text-gray-400">
+                        <!-- Instagram -->
+                        <li class="hover:text-brand-gold" style="transition: color 0.2s;">
+                            <a href="#" aria-label="Instagram">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                            </a>
+                        </li>
+                        <!-- Facebook -->
+                        <li class="hover:text-brand-gold" style="transition: color 0.2s;">
+                            <a href="#" aria-label="Facebook">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                            </a>
+                        </li>
+                        <!-- Twitter -->
+                        <li class="hover:text-brand-gold" style="transition: color 0.2s;">
+                            <a href="#" aria-label="Twitter">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                            </a>
+                        </li>
+                        <!-- LinkedIn -->
+                        <li class="hover:text-brand-gold" style="transition: color 0.2s;">
+                            <a href="#" aria-label="LinkedIn">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Right: Link columns -->
+                <div class="grid w-full gap-6 md:grid-cols-3 lg:gap-20">
+                    <div>
+                        <h3 class="mb-4 font-bold text-sm">Product</h3>
+                        <ul class="space-y-3 text-sm text-gray-400">
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">Overview</a></li>
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#pricing">Pricing</a></li>
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">Marketplace</a></li>
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#features">Features</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="mb-4 font-bold text-sm">Company</h3>
+                        <ul class="space-y-3 text-sm text-gray-400">
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">About</a></li>
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">Team</a></li>
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">Blog</a></li>
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">Careers</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="mb-4 font-bold text-sm">Resources</h3>
+                        <ul class="space-y-3 text-sm text-gray-400">
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">Help</a></li>
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">Sales</a></li>
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">Advertise</a></li>
+                            <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">Privacy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Bottom bar -->
+            <div class="mt-8 flex flex-col justify-between gap-4 border-t border-gray-200 py-8 text-xs font-medium text-gray-400 md:flex-row md:items-center md:text-left">
+                <p class="order-2 lg:order-1">© 2026 Tester.io. All rights reserved.</p>
+                <ul class="order-1 flex flex-col gap-2 md:order-2 md:flex-row md:gap-4">
+                    <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">Terms and Conditions</a></li>
+                    <li class="hover:text-brand-gold" style="transition: color 0.2s;"><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll-triggered animations -->
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-up');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.feature-card, #pricing .flex-1, #testimonials .flex-1').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
