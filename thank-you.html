@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You — Tester.io</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        montserrat: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            gold: '#C6A559',
+                            goldLight: '#E6B979',
+                            dark: '#0A0A0F',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background: #FAFAFA; color: #1a1a2e; }
+
+        .gold-gradient { background: linear-gradient(135deg, #C6A559, #E6B979); }
+        .gold-text {
+            background: linear-gradient(135deg, #C6A559, #E6B979);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-shadow-strong {
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.04),
+                0 8px 24px rgba(198,165,89,0.10),
+                0 20px 48px rgba(0,0,0,0.08);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #C6A559, #E6B979);
+            color: #0A0A0F;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+        }
+        .btn-gold:hover { transform: translateY(-1px); opacity: 0.92; }
+        .btn-gold:focus-visible { outline: 2px solid #C6A559; outline-offset: 2px; }
+        .btn-gold:active { transform: translateY(0) scale(0.98); }
+
+        .btn-outline {
+            border: 1.5px solid #C6A559;
+            color: #C6A559;
+            background: transparent;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+        .btn-outline:hover { background: linear-gradient(135deg, #C6A559, #E6B979); color: #0A0A0F; transform: translateY(-1px); }
+        .btn-outline:focus-visible { outline: 2px solid #C6A559; outline-offset: 2px; }
+        .btn-outline:active { transform: translateY(0) scale(0.98); }
+
+        .logo-glow { filter: drop-shadow(0 0 8px rgba(198, 165, 89, 0.3)); }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-up {
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        .animate-scale-in {
+            animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+            opacity: 0;
+        }
+        .delay-1 { animation-delay: 0.15s; }
+        .delay-2 { animation-delay: 0.3s; }
+
+        .grain::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="font-montserrat antialiased">
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-100/60">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2">
+                <img src="brand%20assets/Tester%20Logo.png" alt="Tester.io Logo" class="w-8 h-8 logo-glow">
+                <span class="text-lg font-bold tracking-tight" style="letter-spacing: -0.03em;">Tester.io</span>
+            </a>
+            <a href="/" class="btn-outline text-sm px-5 py-2 rounded-full">Back to Home</a>
+        </div>
+    </nav>
+
+    <!-- Thank You Content -->
+    <main class="min-h-screen flex items-center justify-center px-6 pt-16 relative overflow-hidden grain">
+        <!-- Decorative background gradients -->
+        <div class="absolute inset-0 opacity-[0.04] pointer-events-none" style="background: radial-gradient(circle at 30% 40%, #C6A559, transparent 50%), radial-gradient(circle at 70% 60%, #E6B979, transparent 50%);"></div>
+
+        <div class="relative z-10 text-center max-w-md">
+            <!-- Checkmark icon -->
+            <div class="animate-scale-in mx-auto mb-8 w-20 h-20 rounded-full gold-gradient flex items-center justify-center card-shadow-strong">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+
+            <!-- Heading -->
+            <h1 class="animate-fade-up text-3xl md:text-4xl font-extrabold mb-4 tracking-tight" style="letter-spacing: -0.03em;">
+                Thank You<span class="gold-text">!</span>
+            </h1>
+
+            <!-- Body -->
+            <p class="animate-fade-up delay-1 text-gray-400 text-sm mb-10" style="line-height: 1.7;">
+                Your message has been received. Our team will review it and get back to you within 24 hours.
+            </p>
+
+            <!-- CTA -->
+            <div class="animate-fade-up delay-2 flex flex-col sm:flex-row justify-center gap-3">
+                <a href="/" class="btn-gold text-sm px-7 py-3 rounded-full inline-block text-center">Back to Home</a>
+                <a href="/#features" class="btn-outline text-sm px-7 py-3 rounded-full inline-block text-center">Explore Features</a>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
