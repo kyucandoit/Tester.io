@@ -1,9 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// --- Supabase server-side client ---
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 // --- Middleware ---
 app.use(express.urlencoded({ extended: true }));
@@ -29,15 +33,36 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/contact', (req, res) => {
+// Server-side contact handler (fallback for non-JS or direct POST)
+app.post('/contact', async (req, res) => {
   const { name, email, message } = req.body;
 
   console.log('--- New Contact Submission ---');
   console.log(`  Name:    ${name}`);
   console.log(`  Email:   ${email}`);
   console.log(`  Message: ${message}`);
-  console.log('------------------------------');
 
+  // Save to Supabase
+  const { error } = await supabase.from('contacts').insert([{ name, email, message }]);
+  if (error) {
+    console.error('Supabase error:', error.message);
+  } else {
+    console.log('  Saved to Supabase ✓');
+  }
+
+  // Send to Google Sheets
+  try {
+    await fetch(process.env.SHEETS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, message })
+    });
+    console.log('  Sent to Google Sheets ✓');
+  } catch (err) {
+    console.error('Sheets error:', err.message);
+  }
+
+  console.log('------------------------------');
   res.redirect('/thank-you.html');
 });
 
