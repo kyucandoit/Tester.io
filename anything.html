@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Craft — Tester Smart Watch Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'serif'],
+                        body: ['"Source Sans 3"', 'sans-serif'],
+                    },
+                    colors: {
+                        cream: '#F0EAE0',
+                        creamDim: '#C8C0B4',
+                        creamMuted: '#8A8278',
+                        warmBlack: '#0D0C0A',
+                        warmDark: '#161412',
+                        warmCard: '#1C1A17',
+                        warmBorder: '#2A2622',
+                        ember: '#D4A574',
+                        emberLight: '#E8C9A0',
+                        emberDim: '#A07850',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: #0D0C0A;
+            color: #F0EAE0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        html { scroll-behavior: smooth; }
+
+        ::selection { background: rgba(212,165,116,0.3); color: #F0EAE0; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0D0C0A; }
+        ::-webkit-scrollbar-thumb { background: #2A2622; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D4A574; }
+
+        /* === ANIMATIONS === */
+        @keyframes fadeUp { from { opacity:0; transform:translateY(36px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes scaleReveal { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:scale(1); } }
+        @keyframes drawLine { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+        @keyframes marquee { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
+
+        .anim { opacity:0; }
+        .anim.vis { animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .anim-fade.vis { animation: fadeIn 0.8s ease forwards; }
+        .anim-scale.vis { animation: scaleReveal 0.8s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}.d5{animation-delay:.5s}.d6{animation-delay:.6s}.d7{animation-delay:.7s}.d8{animation-delay:.8s}
+
+        .hero-anim { animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) forwards; opacity:0; }
+
+        /* === EMBER ACCENT === */
+        .ember-glow { box-shadow: 0 0 40px rgba(212,165,116,0.08), 0 0 100px rgba(212,165,116,0.03); }
+        .ember-text { color: #D4A574; }
+        .ember-line { height:1px; background: linear-gradient(90deg, #D4A574, transparent); }
+        .ember-line-center { height:1px; background: linear-gradient(90deg, transparent, rgba(212,165,116,0.4), transparent); }
+
+        /* === VIDEO === */
+        .video-wrap {
+            background: #0D0C0A;
+            border: 1px solid #2A2622;
+        }
+
+        /* === GRAIN === */
+        .grain::before {
+            content:''; position:absolute; inset:0; opacity:0.03; pointer-events:none; z-index:1;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* === BUTTONS === */
+        .btn-ember {
+            background: #D4A574; color: #0D0C0A; font-family:'Source Sans 3',sans-serif; font-weight:600;
+            border:none; cursor:pointer; position:relative; overflow:hidden;
+            transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease;
+        }
+        .btn-ember::after {
+            content:''; position:absolute; inset:0;
+            background: linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+            transform:translateX(-100%); transition: transform 0.6s ease;
+        }
+        .btn-ember:hover { transform:translateY(-2px); box-shadow: 0 0 30px rgba(212,165,116,0.2), 0 8px 32px rgba(0,0,0,0.3); }
+        .btn-ember:hover::after { transform:translateX(100%); }
+        .btn-ember:focus-visible { outline:2px solid #D4A574; outline-offset:3px; }
+        .btn-ember:active { transform:translateY(0) scale(0.97); }
+
+        .btn-line {
+            border-bottom: 1px solid #D4A574; color:#D4A574; background:none; font-family:'Source Sans 3',sans-serif;
+            font-weight:500; cursor:pointer; padding-bottom:2px;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .btn-line:hover { color:#E8C9A0; border-color:#E8C9A0; }
+
+        /* === NAV === */
+        .nav-link { transition: color 0.25s ease; }
+        .nav-link:hover { color: #D4A574; }
+
+        /* === EDITORIAL QUOTE === */
+        .quote-mark { font-size: 6rem; line-height:1; color: rgba(212,165,116,0.12); font-family:'Playfair Display',serif; }
+
+        /* === MARQUEE === */
+        .marquee-track { animation: marquee 30s linear infinite; }
+        .marquee-track:hover { animation-play-state: paused; }
+    </style>
+</head>
+<body class="font-body antialiased">
+
+    <!-- ====== NAV ====== -->
+    <nav class="fixed top-0 w-full z-50 hero-anim" style="background:rgba(13,12,10,0.85); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid rgba(42,38,34,0.5);">
+        <div class="max-w-7xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
+            <a href="product.html" class="font-display text-sm sm:text-base tracking-tight text-cream">
+                Tester<span class="ember-text">.io</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#film" class="nav-link text-[11px] font-medium text-creamMuted uppercase tracking-[0.18em]">The Film</a>
+                <a href="#story" class="nav-link text-[11px] font-medium text-creamMuted uppercase tracking-[0.18em]">Story</a>
+                <a href="#details" class="nav-link text-[11px] font-medium text-creamMuted uppercase tracking-[0.18em]">Details</a>
+                <a href="product.html" class="nav-link text-[11px] font-medium text-creamMuted uppercase tracking-[0.18em]">Smart Watch Pro</a>
+            </div>
+            <a href="product.html#cta" class="btn-ember text-[11px] px-5 py-2 rounded-full uppercase tracking-wider">Pre-Order</a>
+        </div>
+    </nav>
+
+    <!-- ====== HERO — EDITORIAL TITLE ====== -->
+    <section class="relative min-h-screen flex flex-col justify-end pb-16 sm:pb-24 px-5 sm:px-8 overflow-hidden grain">
+        <!-- Background video — autoplay, atmospheric -->
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover" style="opacity:0.2; filter: saturate(0.6) contrast(1.1);">
+            <source src="generated-watch-reveal.mp4" type="video/mp4">
+        </video>
+        <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(13,12,10,0.4) 0%, rgba(13,12,10,0.15) 30%, rgba(13,12,10,0.6) 65%, #0D0C0A 100%);"></div>
+        <div class="absolute inset-0" style="background: radial-gradient(ellipse at 30% 40%, rgba(212,165,116,0.04) 0%, transparent 60%);"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto w-full">
+            <!-- Issue label -->
+            <div class="hero-anim d2 flex items-center gap-4 mb-8">
+                <div class="ember-line w-12"></div>
+                <span class="text-[10px] sm:text-[11px] font-medium text-ember uppercase tracking-[0.3em]">AI-Generated Vision</span>
+            </div>
+
+            <h1 class="hero-anim d3 font-display text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-normal text-cream leading-[0.9] mb-6" style="letter-spacing:-0.03em;">
+                The<br><em class="ember-text font-medium" style="font-style:italic;">Craft</em>
+            </h1>
+
+            <div class="hero-anim d4 flex flex-col sm:flex-row sm:items-end gap-6 sm:gap-16">
+                <p class="text-sm sm:text-base text-creamDim max-w-sm" style="line-height:1.85;">
+                    A cinematic portrait of the Smart Watch Pro — generated by AI, imagined by humans. Every frame tells the story of obsessive precision.
+                </p>
+                <div class="flex items-center gap-3">
+                    <span class="text-[10px] text-creamMuted uppercase tracking-widest">Scroll to explore</span>
+                    <div class="w-8 h-px bg-ember"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== MARQUEE ====== -->
+    <div class="py-5 overflow-hidden" style="border-top:1px solid #1C1A17; border-bottom:1px solid #1C1A17;">
+        <div class="flex whitespace-nowrap marquee-track">
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">Precision Engineered</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">AI Generated Film</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">Titanium Alloy</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">Sapphire Crystal</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">72-Hour Battery</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">Ceramic Back</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+            <!-- Duplicate for seamless loop -->
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">Precision Engineered</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">AI Generated Film</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">Titanium Alloy</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">Sapphire Crystal</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">72-Hour Battery</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+            <span class="text-[10px] text-creamMuted/30 uppercase tracking-[0.4em] font-medium mx-8">Ceramic Back</span>
+            <span class="text-creamMuted/10 mx-4">◆</span>
+        </div>
+    </div>
+
+    <!-- ====== THE FILM ====== -->
+    <section id="film" class="py-20 sm:py-32 px-5 sm:px-8 relative">
+        <div class="max-w-7xl mx-auto">
+            <!-- Asymmetric layout: narrow label + wide video -->
+            <div class="flex flex-col lg:flex-row gap-10 lg:gap-16">
+                <!-- Left — editorial label -->
+                <div class="lg:w-1/4 lg:pt-4">
+                    <span class="anim inline-block text-[10px] font-medium text-ember uppercase tracking-[0.3em] mb-4">01 / The Film</span>
+                    <h2 class="anim d1 font-display text-2xl sm:text-3xl text-cream leading-[1.15] mb-4" style="letter-spacing:-0.02em;">
+                        Generated by<br>artificial intelligence
+                    </h2>
+                    <p class="anim d2 text-xs sm:text-sm text-creamMuted mb-6" style="line-height:1.85;">
+                        This film was created using Veo3 through the KIE.ai platform — a cinematic smart watch reveal conjured entirely from a text prompt. No cameras. No studio. Just imagination rendered into motion.
+                    </p>
+                    <a href="product.html" class="anim d3 btn-line text-xs inline-block">View Smart Watch Pro →</a>
+                </div>
+
+                <!-- Right — video -->
+                <div class="lg:w-3/4">
+                    <div class="anim-scale d3 video-wrap rounded-xl sm:rounded-2xl p-2 sm:p-3 ember-glow">
+                        <div class="rounded-lg sm:rounded-xl overflow-hidden">
+                            <video
+                                controls
+                                playsinline
+                                preload="metadata"
+                                class="w-full h-auto block"
+                                style="background:#0D0C0A;"
+                            >
+                                <source src="generated-watch-reveal.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-4 px-1">
+                        <span class="text-[9px] text-creamMuted/40 uppercase tracking-widest">Veo3 via KIE.ai · 1080p · 16:9</span>
+                        <span class="text-[9px] text-creamMuted/40 uppercase tracking-widest">AI-Generated</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== EDITORIAL QUOTE ====== -->
+    <section class="py-16 sm:py-24 px-5 sm:px-8 relative grain">
+        <div class="ember-line-center max-w-xl mx-auto mb-16"></div>
+        <div class="max-w-3xl mx-auto text-center">
+            <div class="quote-mark anim mb-[-2.5rem]">"</div>
+            <p class="anim d1 font-display text-xl sm:text-2xl md:text-3xl text-cream italic leading-[1.5] mb-8" style="letter-spacing:-0.01em;">
+                We didn't just design a watch. We designed the feeling of looking down at your wrist and knowing — this was made without compromise.
+            </p>
+            <div class="anim d2 flex flex-col items-center gap-1">
+                <span class="text-xs font-medium text-cream tracking-wide">Design Team</span>
+                <span class="text-[10px] text-creamMuted">Tester.io Hardware Division</span>
+            </div>
+        </div>
+        <div class="ember-line-center max-w-xl mx-auto mt-16"></div>
+    </section>
+
+    <!-- ====== STORY — ALTERNATING EDITORIAL ====== -->
+    <section id="story" class="py-20 sm:py-32 px-5 sm:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-20 sm:mb-28">
+                <span class="anim inline-block text-[10px] font-medium text-ember uppercase tracking-[0.3em] mb-4">02 / The Story</span>
+                <h2 class="anim d1 font-display text-3xl sm:text-4xl md:text-5xl text-cream leading-[1.05] max-w-lg" style="letter-spacing:-0.025em;">
+                    From prompt<br>to <em class="ember-text" style="font-style:italic;">masterpiece</em>
+                </h2>
+            </div>
+
+            <!-- Story block 1 -->
+            <div class="flex flex-col lg:flex-row items-start gap-10 lg:gap-20 mb-20 sm:mb-28">
+                <div class="lg:w-1/2 order-2 lg:order-1">
+                    <div class="anim rounded-xl overflow-hidden" style="background:#161412; border:1px solid #2A2622;">
+                        <img src="https://placehold.co/800x500/161412/D4A574?text=The+Prompt" alt="AI prompt visualization" class="w-full h-64 sm:h-80 object-cover" style="mix-blend-mode:luminosity; opacity:0.7;">
+                        <div class="absolute inset-0 bg-gradient-to-t from-warmBlack/60 to-transparent"></div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 order-1 lg:order-2 lg:pt-8">
+                    <span class="anim text-[10px] text-ember uppercase tracking-[0.25em] mb-3 block">Chapter One</span>
+                    <h3 class="anim d1 font-display text-2xl sm:text-3xl text-cream mb-4" style="letter-spacing:-0.02em;">The Prompt</h3>
+                    <p class="anim d2 text-sm text-creamMuted mb-4" style="line-height:1.85;">
+                        It started with a single sentence: <em class="text-cream">"A luxury smart watch rotating against darkness, lit by gold and blue."</em> From that seed, Veo3's neural architecture hallucinated light, shadow, and motion into existence.
+                    </p>
+                    <p class="anim d3 text-sm text-creamMuted" style="line-height:1.85;">
+                        The result is a 5-second film that captures the essence of the Smart Watch Pro — its titanium curves, its sapphire face, its quiet confidence — without a single photograph ever being taken.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Story block 2 -->
+            <div class="flex flex-col lg:flex-row items-start gap-10 lg:gap-20 mb-20 sm:mb-28">
+                <div class="lg:w-1/2 lg:pt-8">
+                    <span class="anim text-[10px] text-ember uppercase tracking-[0.25em] mb-3 block">Chapter Two</span>
+                    <h3 class="anim d1 font-display text-2xl sm:text-3xl text-cream mb-4" style="letter-spacing:-0.02em;">The Machine Sees</h3>
+                    <p class="anim d2 text-sm text-creamMuted mb-4" style="line-height:1.85;">
+                        Google's Veo3 model processed the prompt through billions of parameters, synthesizing its understanding of light physics, material properties, and cinematic language into frames that never existed before.
+                    </p>
+                    <p class="anim d3 text-sm text-creamMuted" style="line-height:1.85;">
+                        Rim lighting that catches titanium edges. Warm gold reflections that breathe with the rotation. Cool blue shadows that retreat into black. All imagined. All computed. All new.
+                    </p>
+                </div>
+                <div class="lg:w-1/2">
+                    <div class="anim d2 rounded-xl overflow-hidden" style="background:#161412; border:1px solid #2A2622;">
+                        <img src="https://placehold.co/800x500/161412/D4A574?text=Neural+Rendering" alt="Neural rendering" class="w-full h-64 sm:h-80 object-cover" style="mix-blend-mode:luminosity; opacity:0.7;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Story block 3 -->
+            <div class="flex flex-col lg:flex-row items-start gap-10 lg:gap-20">
+                <div class="lg:w-1/2 order-2 lg:order-1">
+                    <div class="anim rounded-xl overflow-hidden" style="background:#161412; border:1px solid #2A2622;">
+                        <img src="https://placehold.co/800x500/161412/D4A574?text=Final+Frame" alt="Final frame" class="w-full h-64 sm:h-80 object-cover" style="mix-blend-mode:luminosity; opacity:0.7;">
+                    </div>
+                </div>
+                <div class="lg:w-1/2 order-1 lg:order-2 lg:pt-8">
+                    <span class="anim text-[10px] text-ember uppercase tracking-[0.25em] mb-3 block">Chapter Three</span>
+                    <h3 class="anim d1 font-display text-2xl sm:text-3xl text-cream mb-4" style="letter-spacing:-0.02em;">Human Meets Machine</h3>
+                    <p class="anim d2 text-sm text-creamMuted mb-4" style="line-height:1.85;">
+                        The final film isn't human. It isn't artificial. It's something new — a collaboration between creative intent and computational power. The watch itself is real, precision-engineered titanium and sapphire. Its portrait is synthetic, precision-rendered light and time.
+                    </p>
+                    <p class="anim d3 text-sm text-creamMuted" style="line-height:1.85;">
+                        Together, they tell the same story: there's beauty in obsessing over every detail.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== DETAILS — TECH SPECS ====== -->
+    <section id="details" class="py-20 sm:py-32 px-5 sm:px-8 relative grain">
+        <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent, rgba(212,165,116,0.01), transparent);"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16 sm:mb-20">
+                <span class="anim inline-block text-[10px] font-medium text-ember uppercase tracking-[0.3em] mb-4">03 / Details</span>
+                <h2 class="anim d1 font-display text-3xl sm:text-4xl md:text-5xl text-cream" style="letter-spacing:-0.025em;">
+                    Numbers don't lie
+                </h2>
+            </div>
+
+            <div class="anim d2 grid grid-cols-2 sm:grid-cols-4 gap-px rounded-2xl overflow-hidden max-w-4xl mx-auto" style="background:#2A2622;">
+                <div class="bg-warmBlack p-6 sm:p-8 text-center">
+                    <p class="font-display text-3xl sm:text-4xl text-cream mb-1">72<span class="ember-text">h</span></p>
+                    <p class="text-[9px] text-creamMuted uppercase tracking-widest">Battery Life</p>
+                </div>
+                <div class="bg-warmBlack p-6 sm:p-8 text-center">
+                    <p class="font-display text-3xl sm:text-4xl text-cream mb-1">36<span class="ember-text">g</span></p>
+                    <p class="text-[9px] text-creamMuted uppercase tracking-widest">Weight</p>
+                </div>
+                <div class="bg-warmBlack p-6 sm:p-8 text-center">
+                    <p class="font-display text-3xl sm:text-4xl text-cream mb-1">50<span class="ember-text">m</span></p>
+                    <p class="text-[9px] text-creamMuted uppercase tracking-widest">Water Resist</p>
+                </div>
+                <div class="bg-warmBlack p-6 sm:p-8 text-center">
+                    <p class="font-display text-3xl sm:text-4xl text-cream mb-1">4<span class="ember-text">nm</span></p>
+                    <p class="text-[9px] text-creamMuted uppercase tracking-widest">Chip Process</p>
+                </div>
+            </div>
+
+            <!-- Film details -->
+            <div class="anim d3 max-w-2xl mx-auto mt-16 sm:mt-20 p-6 sm:p-8 rounded-xl" style="background:#161412; border:1px solid #2A2622;">
+                <h3 class="font-display text-lg text-cream mb-5">About the AI Film</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div class="flex justify-between py-2" style="border-bottom:1px solid #2A2622;">
+                        <span class="text-creamMuted">Model</span>
+                        <span class="text-cream font-medium">Google Veo3 (Fast)</span>
+                    </div>
+                    <div class="flex justify-between py-2" style="border-bottom:1px solid #2A2622;">
+                        <span class="text-creamMuted">Platform</span>
+                        <span class="text-cream font-medium">KIE.ai</span>
+                    </div>
+                    <div class="flex justify-between py-2" style="border-bottom:1px solid #2A2622;">
+                        <span class="text-creamMuted">Resolution</span>
+                        <span class="text-cream font-medium">720p (upscalable)</span>
+                    </div>
+                    <div class="flex justify-between py-2" style="border-bottom:1px solid #2A2622;">
+                        <span class="text-creamMuted">Aspect Ratio</span>
+                        <span class="text-cream font-medium">16:9</span>
+                    </div>
+                    <div class="flex justify-between py-2 sm:col-span-2" style="border-bottom:1px solid #2A2622;">
+                        <span class="text-creamMuted">Prompt</span>
+                        <span class="text-cream font-medium text-right max-w-[60%]" style="font-size:12px;">"Cinematic slow-motion reveal of a luxury smart watch…"</span>
+                    </div>
+                    <div class="flex justify-between py-2 sm:col-span-2">
+                        <span class="text-creamMuted">Generation Time</span>
+                        <span class="text-cream font-medium">~55 seconds</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== CTA ====== -->
+    <section class="py-20 sm:py-32 px-5 sm:px-8 relative">
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="anim ember-line-center mb-12"></div>
+            <h2 class="anim d1 font-display text-3xl sm:text-4xl md:text-5xl text-cream leading-[1.05] mb-5" style="letter-spacing:-0.025em;">
+                Seen enough?<br><em class="ember-text" style="font-style:italic;">Wear the original.</em>
+            </h2>
+            <p class="anim d2 text-sm text-creamMuted max-w-md mx-auto mb-10" style="line-height:1.85;">
+                The AI imagined it. We built it. Starting at $399 with free engraving and 30-day returns.
+            </p>
+            <div class="anim d3 flex flex-col sm:flex-row justify-center gap-4">
+                <a href="product.html#cta" class="btn-ember text-sm px-10 py-4 rounded-full">Pre-Order Smart Watch Pro</a>
+                <a href="product.html" class="btn-line text-sm py-4">Explore Full Product Page →</a>
+            </div>
+            <div class="anim d4 ember-line-center mt-12"></div>
+        </div>
+    </section>
+
+    <!-- ====== FOOTER ====== -->
+    <footer class="py-10 sm:py-14 px-5 sm:px-8" style="border-top:1px solid #1C1A17;">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+            <span class="font-display text-sm text-cream">Tester<span class="ember-text">.io</span></span>
+            <div class="flex items-center gap-6">
+                <a href="product.html" class="text-[11px] text-creamMuted hover:text-ember" style="transition:color 0.3s;">Smart Watch Pro</a>
+                <a href="index.html" class="text-[11px] text-creamMuted hover:text-ember" style="transition:color 0.3s;">Tester.io Home</a>
+            </div>
+            <p class="text-[10px] text-creamMuted/40">&copy; 2026 Tester.io</p>
+        </div>
+    </footer>
+
+    <!-- ====== SCROLL ANIMATIONS ====== -->
+    <script>
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target); } });
+        }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+        document.querySelectorAll('.anim, .anim-fade, .anim-scale').forEach(el => obs.observe(el));
+    </script>
+</body>
+</html>
