@@ -1,3 +1,5 @@
 node_modules/
 .env
 temporary screenshots/
+test-results/
+playwright-report/

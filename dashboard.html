@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Tester.io</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { montserrat: ['Montserrat', 'sans-serif'] },
+                    colors: {
+                        brand: { gold: '#C6A559', goldLight: '#E6B979', dark: '#0A0A0F', darkCard: '#12121A', darkSurface: '#1A1A24', darkBorder: '#2A2A36', muted: '#8A8A9A' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background: #0A0A0F; color: #fff; }
+        .gold-gradient { background: linear-gradient(135deg, #C6A559, #E6B979); }
+        .gold-text { background: linear-gradient(135deg, #C6A559, #E6B979); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .card-shadow { box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 4px 12px rgba(198,165,89,0.06), 0 12px 32px rgba(0,0,0,0.3); }
+        .btn-gold { background: linear-gradient(135deg, #C6A559, #E6B979); color: #0A0A0F; font-weight: 700; border: none; cursor: pointer; transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), opacity 0.2s ease; }
+        .btn-gold:hover { transform: translateY(-1px); opacity: 0.92; }
+        .btn-gold:focus-visible { outline: 2px solid #C6A559; outline-offset: 2px; }
+        .btn-gold:active { transform: translateY(0) scale(0.98); }
+        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-sm { font-size: 11px; padding: 5px 14px; border-radius: 9999px; font-weight: 700; cursor: pointer; transition: transform 0.15s ease, opacity 0.15s ease; }
+        .btn-sm:hover { transform: translateY(-1px); }
+        .btn-sm:active { transform: scale(0.97); }
+        .dash-input { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+        .dash-input:focus { border-color: #C6A559; box-shadow: 0 0 0 3px rgba(198,165,89,0.2); }
+        .dash-input::placeholder { color: #4a4a5a; }
+        .logo-glow { filter: drop-shadow(0 0 8px rgba(198,165,89,0.3)); }
+        @keyframes fadeInUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        .animate-fade-up { animation: fadeInUp 0.5s cubic-bezier(0.16,1,0.3,1) forwards; opacity:0; }
+        .grain::before { content:''; position:absolute; inset:0; opacity:0.03; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events:none; z-index:1; }
+        .table-row { transition: background 0.15s ease; }
+        .table-row:hover { background: rgba(198,165,89,0.04); }
+        .tab-btn { padding: 10px 20px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; background: transparent; color: #8A8A9A; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+        .tab-btn:hover { color: #ccc; }
+        .tab-btn.active { color: #fff; border-bottom-color: #C6A559; }
+        .stat-card { transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
+        .stat-card:hover { transform: translateY(-2px); }
+        .section { display: none; }
+        .section.active { display: block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { display:inline-block; width:16px; height:16px; border:2px solid #2A2A36; border-top-color:#C6A559; border-radius:50%; animation:spin 0.7s linear infinite; }
+        .badge-active { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+        .badge-inactive { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
+        .editor-toolbar button { background: #1A1A24; border: 1px solid #2A2A36; color: #8A8A9A; padding: 4px 10px; font-size: 11px; cursor: pointer; transition: background 0.15s, color 0.15s; border-radius: 6px; }
+        .editor-toolbar button:hover { background: #2A2A36; color: #fff; }
+    </style>
+</head>
+<body class="font-montserrat antialiased">
+
+<!-- ====== PASSWORD GATE ====== -->
+<div id="auth-gate" class="min-h-screen flex items-center justify-center px-6 relative overflow-hidden grain">
+    <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background: radial-gradient(circle at 30% 40%, #C6A559, transparent 50%), radial-gradient(circle at 70% 60%, #E6B979, transparent 50%);"></div>
+    <div class="relative z-10 w-full max-w-sm animate-fade-up">
+        <div class="text-center mb-8">
+            <a href="/" class="inline-flex items-center gap-2 mb-6"><img src="brand%20assets/Tester%20Logo.png" alt="Tester.io" class="w-8 h-8 logo-glow"><span class="text-lg font-bold tracking-tight" style="letter-spacing:-0.03em;">Tester.io</span></a>
+            <h1 class="text-xl font-extrabold tracking-tight" style="letter-spacing:-0.03em;">Admin Dashboard</h1>
+            <p class="text-xs text-brand-muted mt-2" style="line-height:1.7;">Enter the dashboard password to continue.</p>
+        </div>
+        <div class="bg-brand-darkCard rounded-2xl p-6 card-shadow border border-brand-darkBorder">
+            <div id="gate-error" class="hidden text-xs px-4 py-3 rounded-xl mb-4 bg-red-500/10 text-red-400 border border-red-500/20"></div>
+            <div>
+                <label for="gate-password" class="block text-xs font-semibold text-brand-muted mb-1.5">Password</label>
+                <input type="password" id="gate-password" placeholder="••••••••" autofocus class="dash-input w-full text-sm px-4 py-3 rounded-xl border border-brand-darkBorder bg-brand-darkSurface text-white outline-none">
+            </div>
+            <button id="gate-btn" onclick="authenticate()" class="btn-gold w-full text-sm px-7 py-3 rounded-full mt-4">Enter Dashboard</button>
+        </div>
+    </div>
+</div>
+
+<!-- ====== DASHBOARD ====== -->
+<div id="dashboard" class="hidden min-h-screen relative overflow-hidden grain">
+    <div class="absolute inset-0 opacity-[0.02] pointer-events-none" style="background: radial-gradient(circle at 20% 30%, #C6A559, transparent 40%), radial-gradient(circle at 80% 70%, #E6B979, transparent 40%);"></div>
+
+    <!-- Top bar -->
+    <nav class="relative z-10 border-b border-brand-darkBorder bg-brand-dark/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2">
+                <img src="brand%20assets/Tester%20Logo.png" alt="Tester.io" class="w-7 h-7 logo-glow">
+                <span class="text-base font-bold tracking-tight" style="letter-spacing:-0.03em;">Tester.io</span>
+                <span class="text-[10px] font-semibold text-brand-gold bg-brand-gold/10 px-2 py-0.5 rounded-full ml-1">ADMIN</span>
+            </a>
+            <button onclick="logout()" class="text-xs text-brand-muted font-semibold hover:text-red-400" style="transition:color 0.2s;">Log out</button>
+        </div>
+    </nav>
+
+    <!-- Tabs -->
+    <div class="relative z-10 border-b border-brand-darkBorder bg-brand-dark/50 backdrop-blur-sm overflow-x-auto">
+        <div class="max-w-7xl mx-auto px-6 flex gap-0">
+            <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+            <button class="tab-btn" onclick="switchTab('submissions')">Form Submissions</button>
+            <button class="tab-btn" onclick="switchTab('subscribers')">Subscribers</button>
+            <button class="tab-btn" onclick="switchTab('email-log')">Email Log</button>
+            <button class="tab-btn" onclick="switchTab('new-newsletter')">New Newsletter</button>
+            <button class="tab-btn" onclick="switchTab('saved-newsletters')">Saved Newsletters</button>
+        </div>
+    </div>
+
+    <main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
+
+        <!-- ====== OVERVIEW ====== -->
+        <div id="sec-overview" class="section active">
+            <h2 class="text-lg font-extrabold tracking-tight mb-6" style="letter-spacing:-0.03em;">Overview</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="overview-stats">
+                <div class="stat-card bg-brand-darkCard rounded-2xl p-5 border border-brand-darkBorder card-shadow">
+                    <p class="text-xs text-brand-muted font-semibold mb-1">Form Fills</p>
+                    <p class="text-2xl font-extrabold gold-text" id="ov-forms">—</p>
+                    <p class="text-[10px] text-brand-muted mt-1"><span id="ov-forms-today">0</span> today · <span id="ov-forms-week">0</span> this week</p>
+                </div>
+                <div class="stat-card bg-brand-darkCard rounded-2xl p-5 border border-brand-darkBorder card-shadow">
+                    <p class="text-xs text-brand-muted font-semibold mb-1">Subscribers</p>
+                    <p class="text-2xl font-extrabold gold-text" id="ov-subs">—</p>
+                    <p class="text-[10px] text-brand-muted mt-1">Active opt-ins</p>
+                </div>
+                <div class="stat-card bg-brand-darkCard rounded-2xl p-5 border border-brand-darkBorder card-shadow">
+                    <p class="text-xs text-brand-muted font-semibold mb-1">Emails Sent</p>
+                    <p class="text-2xl font-extrabold gold-text" id="ov-emails">—</p>
+                    <p class="text-[10px] text-brand-muted mt-1"><span id="ov-emails-today">0</span> today</p>
+                </div>
+                <div class="stat-card bg-brand-darkCard rounded-2xl p-5 border border-brand-darkBorder card-shadow">
+                    <p class="text-xs text-brand-muted font-semibold mb-1">Unsubscribes</p>
+                    <p class="text-2xl font-extrabold gold-text" id="ov-unsubs">—</p>
+                    <p class="text-[10px] text-brand-muted mt-1">All time</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== FORM SUBMISSIONS ====== -->
+        <div id="sec-submissions" class="section">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-lg font-extrabold tracking-tight" style="letter-spacing:-0.03em;">Form Submissions</h2>
+                <button onclick="loadContacts()" class="btn-sm" style="background:#1A1A24;color:#8A8A9A;border:1px solid #2A2A36;">↻ Refresh</button>
+            </div>
+            <div id="sub-loading" class="text-center py-16"><div class="spinner"></div><p class="text-xs text-brand-muted mt-3">Loading...</p></div>
+            <div id="sub-empty" class="hidden text-center py-16"><p class="text-sm text-brand-muted font-semibold">No submissions yet.</p></div>
+            <div id="sub-table" class="hidden bg-brand-darkCard rounded-2xl border border-brand-darkBorder card-shadow overflow-hidden">
+                <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="border-b border-brand-darkBorder">
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Name</th>
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Email</th>
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Message</th>
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Date</th>
+                    <th class="px-5 py-3 w-12"></th>
+                </tr></thead><tbody id="sub-body"></tbody></table></div>
+            </div>
+        </div>
+
+        <!-- ====== SUBSCRIBERS ====== -->
+        <div id="sec-subscribers" class="section">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-lg font-extrabold tracking-tight" style="letter-spacing:-0.03em;">Subscribers</h2>
+                <button onclick="loadSubscribers()" class="btn-sm" style="background:#1A1A24;color:#8A8A9A;border:1px solid #2A2A36;">↻ Refresh</button>
+            </div>
+            <div id="subs-loading" class="text-center py-16"><div class="spinner"></div><p class="text-xs text-brand-muted mt-3">Loading...</p></div>
+            <div id="subs-empty" class="hidden text-center py-16"><p class="text-sm text-brand-muted font-semibold">No subscribers yet.</p></div>
+            <div id="subs-table" class="hidden bg-brand-darkCard rounded-2xl border border-brand-darkBorder card-shadow overflow-hidden">
+                <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="border-b border-brand-darkBorder">
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Email</th>
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Name</th>
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Status</th>
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Joined</th>
+                    <th class="px-5 py-3 w-24"></th>
+                </tr></thead><tbody id="subs-body"></tbody></table></div>
+            </div>
+        </div>
+
+        <!-- ====== EMAIL LOG ====== -->
+        <div id="sec-email-log" class="section">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-lg font-extrabold tracking-tight" style="letter-spacing:-0.03em;">Email Log</h2>
+                <button onclick="loadEmailLog()" class="btn-sm" style="background:#1A1A24;color:#8A8A9A;border:1px solid #2A2A36;">↻ Refresh</button>
+            </div>
+            <div id="log-loading" class="text-center py-16"><div class="spinner"></div><p class="text-xs text-brand-muted mt-3">Loading...</p></div>
+            <div id="log-empty" class="hidden text-center py-16"><p class="text-sm text-brand-muted font-semibold">No emails sent yet.</p></div>
+            <div id="log-table" class="hidden bg-brand-darkCard rounded-2xl border border-brand-darkBorder card-shadow overflow-hidden">
+                <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="border-b border-brand-darkBorder">
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Recipient</th>
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Subject</th>
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Body</th>
+                    <th class="px-5 py-3 text-[10px] font-bold text-brand-muted uppercase tracking-widest">Sent At</th>
+                </tr></thead><tbody id="log-body"></tbody></table></div>
+            </div>
+        </div>
+
+        <!-- ====== NEW NEWSLETTER ====== -->
+        <div id="sec-new-newsletter" class="section">
+            <h2 class="text-lg font-extrabold tracking-tight mb-6" style="letter-spacing:-0.03em;">New Newsletter</h2>
+            <div class="bg-brand-darkCard rounded-2xl p-6 border border-brand-darkBorder card-shadow max-w-3xl">
+                <div id="nl-message" class="hidden text-xs px-4 py-3 rounded-xl mb-4"></div>
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-brand-muted mb-1.5">Title</label>
+                    <input type="text" id="nl-title" placeholder="Newsletter subject..." class="dash-input w-full text-sm px-4 py-3 rounded-xl border border-brand-darkBorder bg-brand-darkSurface text-white outline-none">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-brand-muted mb-1.5">Body</label>
+                    <div class="editor-toolbar flex gap-1 mb-2">
+                        <button onclick="execCmd('bold')"><b>B</b></button>
+                        <button onclick="execCmd('italic')"><i>I</i></button>
+                        <button onclick="execCmd('underline')"><u>U</u></button>
+                        <button onclick="execCmd('insertUnorderedList')">• List</button>
+                        <button onclick="execCmd('insertOrderedList')">1. List</button>
+                        <button onclick="execLink()">Link</button>
+                    </div>
+                    <div id="nl-body" contenteditable="true" class="w-full min-h-[200px] text-sm px-4 py-3 rounded-xl border border-brand-darkBorder bg-brand-darkSurface text-white outline-none dash-input" style="line-height:1.7;" data-placeholder="Write your newsletter..."></div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="saveNewsletter('draft')" class="btn-sm" style="background:#1A1A24;color:#C6A559;border:1px solid #C6A559;">Save as Draft</button>
+                    <button onclick="saveNewsletter('published')" class="btn-gold btn-sm">Publish</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== SAVED NEWSLETTERS ====== -->
+        <div id="sec-saved-newsletters" class="section">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-lg font-extrabold tracking-tight" style="letter-spacing:-0.03em;">Saved Newsletters</h2>
+                <button onclick="loadNewsletters()" class="btn-sm" style="background:#1A1A24;color:#8A8A9A;border:1px solid #2A2A36;">↻ Refresh</button>
+            </div>
+            <div id="news-loading" class="text-center py-16"><div class="spinner"></div><p class="text-xs text-brand-muted mt-3">Loading...</p></div>
+            <div id="news-empty" class="hidden text-center py-16"><p class="text-sm text-brand-muted font-semibold">No newsletters saved yet.</p></div>
+            <div id="news-list" class="hidden space-y-4"></div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+var dashPassword = null;
+
+// ===================== AUTH =====================
+document.getElementById('gate-password').addEventListener('keydown', function(e) { if (e.key === 'Enter') authenticate(); });
+
+async function authenticate() {
+    var btn = document.getElementById('gate-btn');
+    var input = document.getElementById('gate-password');
+    var err = document.getElementById('gate-error');
+    btn.disabled = true; btn.textContent = 'Verifying...'; err.classList.add('hidden');
+    var res = await fetch('/api/dashboard-auth', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({password:input.value}) });
+    if (res.ok) {
+        dashPassword = input.value;
+        document.getElementById('auth-gate').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        loadOverview();
+    } else {
+        err.textContent = 'Wrong password.'; err.classList.remove('hidden');
+        input.value = ''; input.focus(); btn.disabled = false; btn.textContent = 'Enter Dashboard';
+    }
+}
+
+function logout() {
+    dashPassword = null;
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('auth-gate').classList.remove('hidden');
+    document.getElementById('gate-password').value = '';
+    document.getElementById('gate-password').focus();
+}
+
+// ===================== TABS =====================
+function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    event.target.classList.add('active');
+    document.getElementById('sec-' + name).classList.add('active');
+
+    if (name === 'overview') loadOverview();
+    else if (name === 'submissions') loadContacts();
+    else if (name === 'subscribers') loadSubscribers();
+    else if (name === 'email-log') loadEmailLog();
+    else if (name === 'saved-newsletters') loadNewsletters();
+}
+
+// ===================== HELPERS =====================
+function esc(str) { var d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML; }
+function fmtDate(d) { var dt = new Date(d); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function fmtTime(d) { return new Date(d).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}); }
+async function api(endpoint, extra) {
+    var body = Object.assign({ password: dashPassword }, extra || {});
+    var res = await fetch(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    return res.json();
+}
+
+// ===================== OVERVIEW =====================
+async function loadOverview() {
+    var stats = await api('/api/stats');
+    document.getElementById('ov-forms').textContent = stats.formFills || 0;
+    document.getElementById('ov-forms-today').textContent = stats.formFillsToday || 0;
+    document.getElementById('ov-forms-week').textContent = stats.formFillsWeek || 0;
+    document.getElementById('ov-subs').textContent = stats.subscribers || 0;
+    document.getElementById('ov-emails').textContent = stats.emailsSent || 0;
+    document.getElementById('ov-emails-today').textContent = stats.emailsToday || 0;
+    document.getElementById('ov-unsubs').textContent = stats.unsubscribes || 0;
+}
+
+// ===================== CONTACTS =====================
+async function loadContacts() {
+    show('sub-loading'); hide('sub-empty'); hide('sub-table');
+    var data = await api('/api/contacts');
+    hide('sub-loading');
+    if (!data.length) { show('sub-empty'); return; }
+    show('sub-table');
+    var html = '';
+    data.forEach(function(c,i) {
+        html += '<tr class="table-row border-b border-brand-darkBorder/50 animate-fade-up" style="animation-delay:'+(i*0.03)+'s" id="row-c-'+c.id+'">'
+            + '<td class="px-5 py-4 text-sm font-semibold">'+esc(c.name)+'</td>'
+            + '<td class="px-5 py-4 text-sm text-brand-gold">'+esc(c.email)+'</td>'
+            + '<td class="px-5 py-4 text-xs text-brand-muted max-w-xs truncate">'+esc(c.message)+'</td>'
+            + '<td class="px-5 py-4 text-xs text-brand-muted whitespace-nowrap">'+fmtDate(c.created_at)+'<br><span class="text-brand-darkBorder">'+fmtTime(c.created_at)+'</span></td>'
+            + '<td class="px-5 py-4"><button onclick="deleteContact('+c.id+')" class="text-red-400 opacity-40 hover:opacity-100" style="transition:opacity 0.2s;" title="Delete">✕</button></td>'
+            + '</tr>';
+    });
+    document.getElementById('sub-body').innerHTML = html;
+}
+
+async function deleteContact(id) {
+    if (!confirm('Delete this submission?')) return;
+    await api('/api/contacts/delete', { id: id });
+    var row = document.getElementById('row-c-' + id);
+    if (row) { row.style.opacity='0'; setTimeout(function(){ loadContacts(); }, 300); }
+}
+
+// ===================== SUBSCRIBERS =====================
+async function loadSubscribers() {
+    show('subs-loading'); hide('subs-empty'); hide('subs-table');
+    var data = await api('/api/subscribers');
+    hide('subs-loading');
+    if (!data.length) { show('subs-empty'); return; }
+    show('subs-table');
+    var html = '';
+    data.forEach(function(s,i) {
+        var badge = s.subscribed
+            ? '<span class="badge-active text-[10px] font-bold px-2 py-0.5 rounded-full">Active</span>'
+            : '<span class="badge-inactive text-[10px] font-bold px-2 py-0.5 rounded-full">Unsubscribed</span>';
+        var action = s.subscribed
+            ? '<button onclick="toggleSub('+s.id+',false)" class="btn-sm badge-inactive">Unsubscribe</button>'
+            : '<button onclick="toggleSub('+s.id+',true)" class="btn-sm badge-active">Resubscribe</button>';
+        html += '<tr class="table-row border-b border-brand-darkBorder/50 animate-fade-up" style="animation-delay:'+(i*0.03)+'s">'
+            + '<td class="px-5 py-4 text-sm text-brand-gold">'+esc(s.email)+'</td>'
+            + '<td class="px-5 py-4 text-sm font-semibold">'+esc(s.name || '—')+'</td>'
+            + '<td class="px-5 py-4">'+badge+'</td>'
+            + '<td class="px-5 py-4 text-xs text-brand-muted">'+fmtDate(s.created_at)+'</td>'
+            + '<td class="px-5 py-4">'+action+'</td>'
+            + '</tr>';
+    });
+    document.getElementById('subs-body').innerHTML = html;
+}
+
+async function toggleSub(id, subscribe) {
+    var endpoint = subscribe ? '/api/subscribers/resubscribe' : '/api/subscribers/unsubscribe';
+    await api(endpoint, { id: id });
+    loadSubscribers();
+}
+
+// ===================== EMAIL LOG =====================
+async function loadEmailLog() {
+    show('log-loading'); hide('log-empty'); hide('log-table');
+    var data = await api('/api/email-log');
+    hide('log-loading');
+    if (!data.length) { show('log-empty'); return; }
+    show('log-table');
+    var html = '';
+    data.forEach(function(e,i) {
+        html += '<tr class="table-row border-b border-brand-darkBorder/50 animate-fade-up" style="animation-delay:'+(i*0.03)+'s">'
+            + '<td class="px-5 py-4 text-sm text-brand-gold">'+esc(e.recipient)+'</td>'
+            + '<td class="px-5 py-4 text-sm font-semibold">'+esc(e.subject)+'</td>'
+            + '<td class="px-5 py-4 text-xs text-brand-muted max-w-sm truncate">'+esc(e.body)+'</td>'
+            + '<td class="px-5 py-4 text-xs text-brand-muted whitespace-nowrap">'+fmtDate(e.sent_at)+'<br><span class="text-brand-darkBorder">'+fmtTime(e.sent_at)+'</span></td>'
+            + '</tr>';
+    });
+    document.getElementById('log-body').innerHTML = html;
+}
+
+// ===================== NEWSLETTER EDITOR =====================
+function execCmd(cmd) { document.execCommand(cmd, false, null); }
+function execLink() { var url = prompt('Enter URL:'); if (url) document.execCommand('createLink', false, url); }
+
+async function saveNewsletter(status) {
+    var title = document.getElementById('nl-title').value.trim();
+    var body = document.getElementById('nl-body').innerHTML.trim();
+    var msg = document.getElementById('nl-message');
+    if (!title || !body) { msg.textContent = 'Title and body are required.'; msg.className = 'text-xs px-4 py-3 rounded-xl mb-4 bg-red-500/10 text-red-400 border border-red-500/20'; return; }
+    var editId = document.getElementById('nl-title').dataset.editId;
+    var payload = { title: title, body: body, status: status };
+    if (editId) payload.id = parseInt(editId);
+    await api('/api/newsletters/save', payload);
+    msg.textContent = status === 'draft' ? 'Draft saved!' : 'Newsletter published!';
+    msg.className = 'text-xs px-4 py-3 rounded-xl mb-4 bg-green-500/10 text-green-400 border border-green-500/20';
+    document.getElementById('nl-title').value = '';
+    document.getElementById('nl-body').innerHTML = '';
+    delete document.getElementById('nl-title').dataset.editId;
+}
+
+// ===================== SAVED NEWSLETTERS =====================
+async function loadNewsletters() {
+    show('news-loading'); hide('news-empty'); hide('news-list');
+    var data = await api('/api/newsletters');
+    hide('news-loading');
+    if (!data.length) { show('news-empty'); return; }
+    show('news-list');
+    var container = document.getElementById('news-list');
+    container.innerHTML = '';
+    data.forEach(function(n, i) {
+        var badge = n.status === 'published'
+            ? '<span class="badge-active text-[10px] font-bold px-2 py-0.5 rounded-full">Published</span>'
+            : '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background:rgba(198,165,89,0.1);color:#C6A559;border:1px solid rgba(198,165,89,0.2);">Draft</span>';
+        var card = document.createElement('div');
+        card.className = 'bg-brand-darkCard rounded-2xl p-5 border border-brand-darkBorder card-shadow animate-fade-up';
+        card.style.animationDelay = (i * 0.05) + 's';
+        card.innerHTML = '<div class="flex items-start justify-between mb-3">'
+            + '<div><h3 class="text-sm font-bold">'+esc(n.title)+'</h3><p class="text-[10px] text-brand-muted mt-1">'+fmtDate(n.created_at)+' · Updated '+fmtDate(n.updated_at)+'</p></div>'
+            + badge + '</div>'
+            + '<div class="text-xs text-brand-muted mb-4" style="line-height:1.7;max-height:80px;overflow:hidden;">'+n.body+'</div>'
+            + '<div class="flex gap-2">'
+            + '<button onclick="editNewsletter('+n.id+',this)" class="btn-sm" style="background:#1A1A24;color:#C6A559;border:1px solid #C6A559;">Edit</button>'
+            + '<button onclick="deleteNewsletter('+n.id+')" class="btn-sm" style="background:#1A1A24;color:#f87171;border:1px solid rgba(248,113,113,0.3);">Delete</button>'
+            + '</div>';
+        card.dataset.title = n.title;
+        card.dataset.body = n.body;
+        container.appendChild(card);
+    });
+}
+
+function editNewsletter(id, btn) {
+    var card = btn.closest('.bg-brand-darkCard');
+    document.getElementById('nl-title').value = card.dataset.title;
+    document.getElementById('nl-body').innerHTML = card.dataset.body;
+    document.getElementById('nl-title').dataset.editId = id;
+    switchTabByName('new-newsletter');
+}
+
+function switchTabByName(name) {
+    document.querySelectorAll('.tab-btn').forEach(function(b) {
+        b.classList.remove('active');
+        if (b.textContent.toLowerCase().replace(/\s+/g, '-') === name) b.classList.add('active');
+    });
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('sec-' + name).classList.add('active');
+}
+
+async function deleteNewsletter(id) {
+    if (!confirm('Delete this newsletter?')) return;
+    await api('/api/newsletters/delete', { id: id });
+    loadNewsletters();
+}
+
+// ===================== UTILS =====================
+function show(id) { document.getElementById(id).classList.remove('hidden'); }
+function hide(id) { document.getElementById(id).classList.add('hidden'); }
+</script>
+</body>
+</html>
